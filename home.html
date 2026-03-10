@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UCSC Hub</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#e5e5e8;
+}
+
+/* NAVBAR */
+
+.navbar{
+background:#a30000;
+color:white;
+padding:12px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+font-weight:bold;
+font-size:18px;
+}
+
+/* MENU */
+
+.menu{
+display:flex;
+gap:10px;
+}
+
+.menu button{
+border:none;
+padding:8px 15px;
+border-radius:15px;
+cursor:pointer;
+font-size:13px;
+background:#ff6b6b;
+color:white;
+transition:0.3s;
+}
+
+/* ACTIVE MENU */
+
+.active-menu{
+background:#ffc107 !important;
+color:black !important;
+}
+
+/* DARK BUTTON */
+
+.dark-btn{
+border:1px solid white;
+border-radius:50%;
+width:32px;
+height:32px;
+display:flex;
+justify-content:center;
+align-items:center;
+cursor:pointer;
+}
+
+/* PAGES */
+
+.page{
+display:none;
+opacity:0;
+transition:opacity 0.4s ease;
+}
+
+.page.active{
+display:block;
+opacity:1;
+}
+
+/* CARD */
+
+.container{
+display:flex;
+justify-content:center;
+margin-top:80px;
+}
+
+.card{
+background:white;
+padding:30px;
+width:520px;
+border-radius:12px;
+box-shadow:0 6px 15px rgba(0,0,0,0.15);
+animation:fadeIn 0.4s;
+}
+
+/* FADE ANIMATION */
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+/* INPUT */
+
+.input-area{
+display:flex;
+gap:10px;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button.add-btn{
+background:#a30000;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:6px;
+cursor:pointer;
+}
+
+ul{
+margin-top:20px;
+padding-left:18px;
+}
+
+li{
+padding:8px 0;
+border-bottom:1px solid #eee;
+}
+
+/* TIMER */
+
+.timer{
+font-size:40px;
+text-align:center;
+margin:20px 0;
+}
+
+/* DARK MODE */
+
+.dark{
+background:#121212;
+}
+
+.dark .card{
+background:#1e1e1e;
+color:white;
+}
+
+.dark .navbar{
+background:black;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<div class="logo">UCSC Hub</div>
+
+<div class="menu">
+
+<button class="active-menu" onclick="showPage('idea',this)">Idea Board</button>
+
+<button onclick="showPage('timer',this)">Study Timer</button>
+
+<button onclick="showPage('gpa',this)">GPA Calc</button>
+
+</div>
+
+<div class="dark-btn" onclick="toggleDark()">🌙</div>
+
+</div>
+
+<!-- IDEA BOARD -->
+
+<div id="idea" class="page active">
+
+<div class="container">
+<div class="card">
+
+<h2>💡 Project Idea Board</h2>
+
+<div class="input-area">
+<input id="ideaInput" placeholder="Enter a new project idea...">
+<button class="add-btn" onclick="addIdea()">Add Idea</button>
+</div>
+
+<ul id="ideaList">
+<li>AI-Powered Resume Parser for Students</li>
+<li>Campus Food Delivery Web App</li>
+<li>Peer-to-Peer Textbook Exchange</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<!-- TIMER -->
+
+<div id="timer" class="page">
+
+<div class="container">
+<div class="card">
+
+<h2>⏳ Study Timer</h2>
+
+<div class="timer" id="timerDisplay">25:00</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="resetTimer()">Reset</button>
+
+</div>
+</div>
+
+</div>
+
+<!-- GPA -->
+
+<div id="gpa" class="page">
+
+<div class="container">
+<div class="card">
+
+<h2>📊 GPA Calculator</h2>
+
+<input id="grade1" placeholder="Subject 1 GPA">
+<br><br>
+
+<input id="grade2" placeholder="Subject 2 GPA">
+<br><br>
+
+<input id="grade3" placeholder="Subject 3 GPA">
+
+<br><br>
+
+<button onclick="calculateGPA()">Calculate GPA</button>
+
+<h3 id="result"></h3>
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+/* PAGE SWITCH */
+
+function showPage(page,btn){
+
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
+});
+
+document.getElementById(page).classList.add("active");
+
+/* MENU HIGHLIGHT */
+
+document.querySelectorAll(".menu button").forEach(b=>{
+b.classList.remove("active-menu");
+});
+
+btn.classList.add("active-menu");
+
+}
+
+/* IDEA BOARD */
+
+function addIdea(){
+
+let text=document.getElementById("ideaInput").value;
+
+if(text.trim()==="") return;
+
+let li=document.createElement("li");
+li.textContent=text;
+
+document.getElementById("ideaList").appendChild(li);
+
+document.getElementById("ideaInput").value="";
+}
+
+/* TIMER */
+
+let time=1500;
+let interval;
+
+function updateTimer(){
+
+let minutes=Math.floor(time/60);
+let seconds=time%60;
+
+if(seconds<10) seconds="0"+seconds;
+
+document.getElementById("timerDisplay").innerText=
+minutes+":"+seconds;
+
+}
+
+function startTimer(){
+
+if(interval) return;
+
+interval=setInterval(()=>{
+
+time--;
+updateTimer();
+
+if(time<=0){
+
+clearInterval(interval);
+
+alert("Study session finished!");
+
+}
+
+},1000);
+
+}
+
+function resetTimer(){
+
+clearInterval(interval);
+
+interval=null;
+
+time=1500;
+
+updateTimer();
+
+}
+
+/* GPA */
+
+function calculateGPA(){
+
+let g1=parseFloat(document.getElementById("grade1").value)||0;
+let g2=parseFloat(document.getElementById("grade2").value)||0;
+let g3=parseFloat(document.getElementById("grade3").value)||0;
+
+let gpa=((g1+g2+g3)/3).toFixed(2);
+
+document.getElementById("result").innerText="Your GPA: "+gpa;
+
+}
+
+/* DARK MODE */
+
+function toggleDark(){
+
+document.body.classList.toggle("dark");
+
+}
+
+updateTimer();
+
+</script>
+
+</body>
+</html>
