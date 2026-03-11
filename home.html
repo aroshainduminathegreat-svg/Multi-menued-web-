@@ -66,17 +66,22 @@ align-items:center;
 cursor:pointer;
 }
 
-/* PAGES */
+/* PAGES WITH SMOOTH ANIMATION */
 
 .page{
-display:none;
 opacity:0;
-transition:opacity 0.4s ease;
+visibility:hidden;
+position:absolute;
+width:100%;
+transition:opacity 0.4s ease, transform 0.4s ease;
+transform:translateY(15px);
 }
 
 .page.active{
-display:block;
 opacity:1;
+visibility:visible;
+position:relative;
+transform:translateY(0);
 }
 
 /* CARD */
@@ -264,15 +269,19 @@ background:black;
 
 <script>
 
-/* PAGE SWITCH */
+/* PAGE SWITCH WITH SMOOTH FADE */
 
 function showPage(page,btn){
 
-document.querySelectorAll(".page").forEach(p=>{
+let pages=document.querySelectorAll(".page");
+
+pages.forEach(p=>{
 p.classList.remove("active");
 });
 
+setTimeout(()=>{
 document.getElementById(page).classList.add("active");
+},50);
 
 /* MENU HIGHLIGHT */
 
@@ -378,3 +387,4 @@ updateTimer();
 
 </body>
 </html>
+```
